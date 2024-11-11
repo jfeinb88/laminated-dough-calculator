@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dough Layer Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 20px;
+    }
+
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+
+    #history {
+      margin-top: 20px;
+      width: 80%;
+      max-width: 600px;
+    }
+
+    #history ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    #history li {
+      background-color: #f1f1f1;
+      padding: 10px;
+      margin: 5px;
+      border: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+  <h1>Dough Layer Calculator</h1>
+
+  <!-- Buttons for single and double fold -->
+  <button onclick="addSingleFold()">Single Fold (x3 layers)</button>
+  <button onclick="addDoubleFold()">Double Fold (x4 layers)</button>
+  <button onclick="resetApp()">Reset</button>
+
+  <h2>Total Layers: <span id="layer-count">3</span></h2>
+
+  <!-- History Log -->
+  <div id="history">
+    <h3>History</h3>
+    <ul id="history-list"></ul>
+  </div>
+
+  <script>
+    // Initialize layer count and history
+    let currentLayers = parseInt(localStorage.getItem('currentLayers')) || 3;
+    let history = JSON.parse(localStorage.getItem('history')) || [];
+
+    // Display initial values
+    document.getElementById('layer-count').textContent = currentLayers;
+    const historyList = document.getElementById("history-list");
+    history.forEach(item => {
+      const logItem = document.createElement("li");
+      logItem.textContent = item;
+      historyList.appendChild(logItem);
+    });
+
+    // Function to handle single fold
+    function addSingleFold() {
+      const previousLayers = currentLayers;
+      currentLayers *= 3;
+      updateDisplay(previousLayers, "Single Fold (x3 layers)");
+    }
+
+    // Function to handle double fold
+    function addDoubleFold() {
+      const previousLayers = currentLayers;
+      currentLayers *= 4;
+      updateDisplay(previousLayers, "Double Fold (x4 layers)");
+    }
+
+    // Function to update the display and save to history
+    function updateDisplay(previousLayers, foldType) {
+      document.getElementById("layer-count").textContent = currentLayers;
+      const logItem = `${foldType} - Previous: ${previousLayers} layers, New: ${currentLayers} layers`;
+      history.push(logItem);
+
+      // Save to localStorage
+      localStorage.setItem('currentLayers', currentLayers);
+      localStorage.setItem('history', JSON.stringify(history));
+
+      // Update history display
+      const historyListItem = document.createElement("li");
+      historyListItem.textContent = logItem;
+      historyList.appendChild(historyListItem);
+    }
+
+    // Function to reset the app
+    function resetApp() {
+      currentLayers = 3;
+      history = [];
+      localStorage.setItem('currentLayers', currentLayers);
+      localStorage.setItem('history', JSON.stringify(history));
+      document.getElementById("layer-count").textContent = currentLayers;
+      document.getElementById("history-list").innerHTML = '';
+    }
+  </script>
+</body>
+</html>
